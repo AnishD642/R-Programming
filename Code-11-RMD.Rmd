@@ -1,0 +1,120 @@
+---
+title: "Code-11-RMD"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns #rows or columns 
+    vertical_layout: fill #fill or scroll
+#Ctrl+Shift+K
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(dslabs)
+```
+
+Page 1
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A1
+
+```{r}
+data(murders)
+hist(murders$population, main = 'population',xlab = 'values', col='red')
+```
+
+Page 2
+===
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B2
+
+```{r}
+barplot(murders$population, main = 'Population plot',xlab = 'Values', ylab = 'No of Instances', col= 'green',horiz = TRUE)
+```
+
+Page 3 
+===
+Column {data-width=350}
+-----------------------------------------------------------------------
+### Chart C3
+
+```{r}
+plot(murders$population, type= "p")
+```
+
+### Chart D4
+
+```{r}
+plot(murders$population, type= "l")
+```
+
+### Chart E5
+
+```{r}
+plot(murders$population, type= "b")
+```
+
+Page 4 {data-orientation=rows}
+===
+column {data-width=650}
+-----------------------------------------------------------------------
+### Chart F6
+
+```{r}
+plot(murders$region, type= "p")
+```
+
+row {data-height=650}
+-----------------------------------------------------------------------
+### Chart G7
+
+```{r}
+plot(murders$population, type= "h")
+```
+
+### Chart H8
+```{r}
+plot(murders$population, type= "h")
+```
+
+Page 6 {data-icon="fa-hashtag"}
+===
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Chart I9
+
+```{r}
+plot(murders$population, type= "h")
+```
+
+### Chart J10
+
+```{r}
+plot(murders$population, type= "h")
+```
+
+Page 7 {data-orientation=rows}
+===
+Row
+-----------------------------------------------------------------------
+
+### Articles per day 
+```{r}
+valueBox(45, icon="fa-pencil",href="#details")
+```
+
+### Comments per day 
+```{r}
+valueBox(45, icon="fa-comments")
+```
+
+### Spam per day 
+```{r}
+valueBox(45, icon="fa-trash")
+```
+
