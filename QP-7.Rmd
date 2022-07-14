@@ -1,0 +1,336 @@
+---
+title: "DataViz Theory DA"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+library(dplyr)
+library(plotly)
+library(dslabs)
+library(ggridges)
+library(corrplot)
+
+data(mtcars)
+
+#Store mtcars dataset in a variable
+data <- mtcars
+
+#Create factors with value labels 
+data$gear <- factor(data$gear,levels=c(3,4,5),  
+                      labels=c("3gears", "4gears", "5gears"))  
+data$am <- factor(data$am,levels=c(0,1),  
+                    labels=c("Automatic","Manual"))  
+data$cyl <- factor(data$cyl,levels=c(4,6,8),  
+                     labels=c("4cyl","6cyl","8cyl"))
+data$vs <- factor(data$vs, levels=c(0,1),
+                     labels=c("V-shaped","Straight"))
+data$carb <- factor(data$carb, levels=c(1,2,3,4,6,8),
+                    labels=c("1-carb","2-carb","3-carb","4-carb","6-carb","8-carb"))
+
+Categorical.Variables = c("cyl", "vs", "am", "gear", "carb")
+Numeric.Variables = c("mpg", "disp", "hp","drat","wt","qsec")
+
+M<-cor(mtcars)
+head(round(M,2)) 
+```
+
+Page 1
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 1.1
+
+```{r}
+data %>% 
+  ggplot(aes(x = gear, y = mean(disp), fill = gear)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Basic Bar Plot") +
+  xlab("Number of Gears") +
+  ylab("Average Displacement") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 2
+===
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart 2.1
+
+```{r}
+data %>%
+  ggplot(aes(x = gear, fill = vs)) + # removed y argument and value
+  geom_bar() +
+  ggtitle("Stacked Bar Plot") +
+  xlab("Number of Gears") +
+  ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 2.2
+
+```{r}
+ggplot(data) +
+  geom_bar(aes(x = gear, fill = vs), position = 'dodge') +
+  ggtitle("Grouped Bar Plot") +
+  xlab("Number of Gears") +
+  ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 3 
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 3.1
+
+```{r}
+ggplot(data) +
+  geom_histogram(aes(x = disp), fill = 'blue',
+                 color = "lightblue", binwidth = 50)+
+  ggtitle("Basic Histogram") +
+  xlab("Displacement") +
+  ylab("Frequency") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 4 
+=== 
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 4.1
+
+```{r}
+ggplot(as.data.frame(table(data$vs,
+                           data$am))) +
+  geom_tile(aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_text(aes(x = Var1, y = Var2, label = Freq),
+            color = "yellow") +
+  ggtitle("Tiles Plot") +
+  xlab("Engine") +
+  ylab("Transmission") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 4.2
+
+```{r}
+ggplot(as.data.frame(table(data$gear,
+                           data$carb))) +
+  geom_tile(aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_text(aes(x = Var1, y = Var2, label = Freq),
+            color = "yellow") +
+  ggtitle("Tiles Plot") +
+  xlab("Number of Gears") +
+  ylab("Number of Carburetors") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 5 
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 5.1
+
+```{r}
+ggplot(data) +
+  geom_violin(aes(x = cyl , y = disp, fill = cyl)) +
+  ggtitle("Violin Plot") +
+  xlab("Number of cylinders") +
+  ylab("Displacement") +
+  theme_bw() +
+  
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart 5.2
+
+```{r}
+ggplot(data) +
+  geom_violin(aes(x = vs , y = disp, fill = vs)) +
+  ggtitle("Violin Plot") +
+  xlab("Engine") +
+  ylab("Displacement") +
+  theme_bw() +
+  
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 5.3
+
+```{r}
+ggplot(data) +
+  geom_violin(aes(x = am , y = disp, fill = am)) +
+  ggtitle("Violin Plot") +
+  xlab("Transmission") +
+  ylab("Displacement") +
+  theme_bw() +
+  
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 6
+===
+Column {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("categorical_variable", label = "Select Categorical Variable:", choices = Categorical.Variables)
+
+selectInput("numeric_variable", label = "Select Numeric Variable:", choices = Numeric.Variables)
+```
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 6.1
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable]],
+              color = ~data[[input$categorical_variable]],
+              colors = "Paired",
+              type = "box") %>%
+  layout(title = "",
+         xaxis = list(title = "" ,
+                      zeroline = FALSE))
+})
+```
+
+Page 7
+===
+Column {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("categorical_variable", label = "Select Categorical Variable:", choices = Categorical.Variables)
+
+selectInput("numeric_variable", label = "Select Numeric Variable:", choices = Numeric.Variables)
+```
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart 7.1
+
+```{r}
+renderPlotly({
+  data %>%
+    count(var = data[[input$categorical_variable]], name = "count") %>%
+    plot_ly( x = ~var, y = ~ count, type = "bar", marker = list(color = '#008ae6',
+                           line = list(color = '#008ae6', width = 2)), hoverinfo = "x+y") %>%
+    add_text(text = ~paste0( " (",   scales::percent(count/sum(count)),")"), 
+           textposition = "bottom", 
+           textfont = list(size = 12, color = "white"), 
+           showlegend = FALSE) %>%
+    layout(xaxis = list(title = ""), yaxis = list(title = ""))
+})
+```
+
+### Chart 7.2
+
+```{r}
+renderPlotly({
+  plot_ly(x = data[[input$numeric_variable]], type = "histogram",  marker = list(color = "#008ae6",
+                            line = list(color = "darkgray",
+                                        width = 1)))
+})
+```
+
+Page 8 {data-icon="fa-hashtag"}
+===
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Chart 8.1
+
+```{r}
+plot(data$gear)
+```
+
+### Chart 8.2
+
+```{r}
+plot(data$carb)
+```
+
+### Chart 8.3
+
+```{r}
+plot(data$cyl)
+```
+
+Page 9 {data-icon="fa-hashtag"}
+===
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Chart 9.1
+
+```{r}
+ggplot(data) +
+  geom_density_ridges(aes(x = mpg , y = cyl,
+                          fill = carb), alpha = 0.7) +
+  ggtitle("Ridge Plot") +
+  xlab("Miles per gallon") +
+  ylab("Number of Cylinders") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+### Chart 9.2
+
+```{r}
+ggplot(data) +
+  geom_density_ridges(aes(x = qsec , y = cyl,
+                          fill = carb), alpha = 0.7) +
+  ggtitle("Ridge Plot") +
+  xlab("Quarter Mile Time") +
+  ylab("Number of Cylinders") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 10
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart 10.1
+
+```{r}
+corrplot(M, method="number")
+```
