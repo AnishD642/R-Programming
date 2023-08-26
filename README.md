@@ -1,6 +1,6 @@
 ## R-Programming
 
-#Collection of codes in R effectively demonstrating :<br/>
+Collection of codes in R effectively demonstrating :<br/>
 <ul>
   <li>Dataset Analysis, bar and scatter plots, boxplots and density plots</li>
 <li>Different types of Multivariate analysis such as histogram, stacked bar plot variations, tiles plot, violin and ridge plots</li>
